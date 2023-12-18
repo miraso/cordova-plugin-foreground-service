@@ -6,6 +6,7 @@ import android.app.Service;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.os.IBinder;
 import android.os.Bundle;
 import android.annotation.TargetApi;
@@ -69,12 +70,19 @@ public class ForegroundService extends Service {
         // Get notification icon
         int icon = getResources().getIdentifier((String) extras.get("icon"), "drawable", context.getPackageName());
 
+        // Click notification to open app
+        String packageName  = context.getPackageName();
+        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+        launchIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, launchIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        
         // Make notification
         Notification notification = new Notification.Builder(context, "foreground.service.channel")
             .setContentTitle((CharSequence) extras.get("title"))
             .setContentText((CharSequence) extras.get("text"))
             .setOngoing(true)
             .setSmallIcon(icon == 0 ? 17301514 : icon) // Default is the star icon
+            .setContentIntent(pendingIntent)
             .build();
 
         // Get notification ID
