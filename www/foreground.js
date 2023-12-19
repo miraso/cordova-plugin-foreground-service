@@ -6,5 +6,6 @@ module.exports = {
   },
   stop: function() {
     exec(null, null, "ForegroundPlugin", "stop", []);
-  }
+  },
+  isSupportClickToOpenApp: true
 };
